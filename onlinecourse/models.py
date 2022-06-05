@@ -136,5 +136,6 @@ class Choice(models.Model):
 # One choice could belong to multiple submissions
 class Submission(models.Model):
    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
-   chocies = models.ManyToManyField(Choice)
+   choices_id = models.JSONField(default=list)
+   choices = models.ManyToManyField(Choice)
 #    Other fields and methods you would like to design
