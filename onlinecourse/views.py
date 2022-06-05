@@ -148,17 +148,20 @@ def show_exam_result(request, course_id, submission_id):
     questions = course.question_set.all()
     submited_choices = submission.choices_id
     total_score = 0
+    student_score = 0
 
     for question in questions:
+        total_score += question.grade
         choices = question.choice_set.all()
         correct_answers = choices.filter(is_correct=True).count()
         submited_answers = choices.filter(is_correct=True, id__in=submited_choices).count()
         if correct_answers == submited_answers:
-            total_score += question.grade
+            student_score += question.grade
             
     context['course'] = course
     context['selected_ids'] = submited_choices
-    context['grade'] = total_score
+    context['grade'] = student_score
+    context['total_grade'] = total_score
 
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
 
