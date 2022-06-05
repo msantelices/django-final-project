@@ -141,11 +141,25 @@ def submit(request, course_id):
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
+    context = {}
+
     course = get_object_or_404(Course, pk=course_id)
     submission = get_object_or_404(Submission, pk=submission_id)
     questions = course.question_set.all()
-    print(questions)
+    submited_choices = submission.choices_id
+    total_score = 0
 
-    return HttpResponse(submission.choices_id)
+    for question in questions:
+        choices = question.choice_set.all()
+        correct_answers = choices.filter(is_correct=True).count()
+        submited_answers = choices.filter(is_correct=True, id__in=submited_choices).count()
+        if correct_answers == submited_answers:
+            total_score += question.grade
+            
+    context['course'] = course
+    context['selected_ids'] = submited_choices
+    context['grade'] = total_score
+
+    return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
 
 
