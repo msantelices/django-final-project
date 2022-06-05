@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -52,7 +55,35 @@
         <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
             <!--HINT Display exam results-->
-        </div>
+            <div class="accordion" id="accordionExample">
+                {% for question in course.question_set.all %}
+                <div class="card">
+                  <div class="card-header" id="heading_{{question.id}}">
+                    <h2 class="mb-0">
+                      <button style="font-weight: bold; color: #000;" class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse_{{question.id}}" aria-expanded="true" aria-controls="collapse_{{question.id}}">
+                        {{ question.question_text}}
+                      </button>
+                    </h2>
+                  </div>
+              
+                  <div id="collapse_{{question.id}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                      <ul>
+                        {% for choice in question.choice_set.all %}
+                            {% if choice.is_correct and choice.id in selected_ids %}
+                                <li class="text-success">Correct answer: {{ choice.choice_text }}</li>
+                            {% elif choice.is_correct and choice.id not in selected_ids %}
+                                <li class="text-warning">Not selected: {{ choice.choice_text }}</li>
+                            {% else %}
+                                <li>{{ choice.choice_text }}</li>
+                            {% endif %}
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+            </div>
     </div>
 </body>
 </html>
